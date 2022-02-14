@@ -106,7 +106,7 @@ class ServiceProvider extends Service
     protected function publishVersion(){
         $file = __DIR__.'/../.env';
         $systemEnv = Env::load($file);
-        $envFile = app()->getRootPath().'public/eadmin/.env';
+        $envFile = app()->getRootPath().'public/exadmin/.env';
         if(is_file($envFile)){
             $env =  Env::load($envFile);
             //版本检测
@@ -119,7 +119,7 @@ class ServiceProvider extends Service
             $color = config('admin.theme.color','#409EFF');
             if($color != $env->get('THEME_COLOR','#409EFF')){
                 $finder = new Finder();
-                $dir = app()->getRootPath().'public/eadmin/static/';
+                $dir = app()->getRootPath().'public/exadmin/static/';
                 foreach ($finder->in($dir)->name(['*.css','*.js']) as $file) {
                     $filePath = $file->getRealPath();
                     $content = file_get_contents($filePath);

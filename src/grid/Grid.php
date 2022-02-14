@@ -70,6 +70,7 @@ use think\Model;
  * @method $this params(array $value) 加载数据附加参数
  * @method $this selectionType(string $value) 多选checkbox 单选radio
  * @method $this sumText(string $value) 合计行第一列的文本
+ * @method $this selectField(string $value) 设置选中项字段
  * @property Filter $filter
  */
 class Grid extends Component
@@ -132,6 +133,7 @@ class Grid extends Component
         $this->bindAttValue('addParams', []);
         $this->attr('eadmin_grid_param', $this->bindAttr('addParams'));
         $this->attr('eadmin_grid', $this->bindAttr('modelValue'));
+        $this->selectField(Request::get('eadmin_select_field',$this->drive->getPk()));
         $this->scroll(['x' => 'max-content']);
         $this->attr('locale', ['emptyText' => admin_trans('admin.empty')]);
         $this->loadDataUrl('eadmin.rest');
@@ -584,6 +586,7 @@ class Grid extends Component
         foreach ($datas as $key => $data) {
             //主键
             $row = ['eadmin_id' => $data[$this->drive->getPk()] ?? $key];
+            $row = ['eadmin_'.$this->attr('selectField') => $data[$this->attr('selectField')]];
             if (is_null($this->customClosure)) {
                 //树形父级pid
                 if ($this->isTree) {

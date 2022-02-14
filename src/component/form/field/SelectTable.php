@@ -35,6 +35,7 @@ use think\helper\Str;
  * @method $this popperAppendToBody(bool $value = true) 是否将弹出框插入至 body 元素。在弹出框的定位出现问题时，可将该属性设置为 false
  * @method $this automaticDropdown(bool $value = true) 对于不可搜索的 Select，是否在输入框获得焦点后自动弹出选项菜单
  * @method $this clearIcon(string $icon) 自定义清空图标的类名
+ * @method $this selectField(string $value) 设置选中项字段
  * @package Eadmin\component\form\field
  */
 class SelectTable extends Field
@@ -64,7 +65,8 @@ class SelectTable extends Field
         }
         $params = Admin::parseUrlQuery($from);
         $from = Admin::dispatch($from);
-        $this->params(array_merge($from->getCallMethod(),$params));
+
+        $this->params(array_merge($from->getCallMethod(),$params,['eadmin_select_field'=>$this->attr('selectField')]));
         return $this;
     }
     protected function selectRequest(\Closure $closure,\Closure $custom){

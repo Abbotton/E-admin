@@ -108,7 +108,7 @@
                      :pagination="false" :loading="loading"
                      :rowClassName="rowClassNameHandel"
                      v-bind="$attrs"
-                     row-key="eadmin_id"
+                     :row-key="rowKey"
                      ref="dragTable"
                      class="eadmin_table">
                 <template #title v-if="header">
@@ -257,6 +257,10 @@
               type:[Boolean,Number],
               default:false
             },
+            selectField:{
+              type:String,
+              default:'eadmin_id'
+            }
         },
         inheritAttrs: false,
         emits: ['update:modelValue','update:selection','update:data','update:initLoad'],
@@ -264,6 +268,7 @@
             let sortable = null
             const route = useRoute()
             const state = inject(store)
+            const rowKey = 'eadmin_' + props.selectField
             const proxyData = props.proxyData
             const dragTable = ref('')
             const tableBox = ref('')
@@ -621,7 +626,7 @@
                         //当用户手动勾选数据行的 Checkbox 时触发的事件
                         onSelect: (record, selected, selectedRows, nativeEvent) => {
                             const ids = selectedRows.map(item=>{
-                                return item.eadmin_id
+                                return item[rowKey]
                             })
                             if(selected){
                                 if(props.selectionType === 'checkbox'){
@@ -630,19 +635,19 @@
                                     selectIds.value = ids
                                 }
                             }else{
-                                deleteArr(selectIds.value,record.eadmin_id)
+                                deleteArr(selectIds.value,record[rowKey])
                             }
                             ctx.emit('update:selection',selectIds.value)
                         },
                         onSelectAll:(selected, selectedRows, changeRows)=>{
                             const ids = selectedRows.map(item=>{
-                                return item.eadmin_id
+                                return item[rowKey]
                             })
                             if(selected){
                                 selectIds.value = unique(selectIds.value.concat(ids))
                             }else{
                                 changeRows.map(item=>{
-                                    deleteArr(selectIds.value,item.eadmin_id)
+                                    deleteArr(selectIds.value,item[rowKey])
                                 })
                             }
                             ctx.emit('update:selection',selectIds.value)
@@ -896,7 +901,8 @@
                 empty,
                 columnFilter,
                 columnFilterReset,
-                columnHeader
+                columnHeader,
+                rowKey
             }
         }
     })

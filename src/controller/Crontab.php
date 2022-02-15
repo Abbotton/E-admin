@@ -42,8 +42,7 @@ class Crontab extends Controller
     }
     //查看日志
     public function log($id){
-        $list = Schedule::list();
-        $logs = $list[$id]['log'];
+        $logs = Schedule::getLog($id);
         $timeline = TimeLine::create();
         foreach ($logs as $log) {
             $timeline->item($log['message'])->timestamp($log['time']);

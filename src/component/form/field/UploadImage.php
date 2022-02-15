@@ -28,7 +28,7 @@ class UploadImage extends Upload
     {
         parent::__construct($field, $value);
 
-        $this->displayType('image')->accept('image/*')->size(80, 80)->isUniqidmd5();
+        $this->displayType('image')->attr('accept','image/*')->size(80, 80)->isUniqidmd5();
     }
 
     /**
@@ -84,11 +84,8 @@ class UploadImage extends Upload
             if (count($this->interventionCalls) > 0) {
                 try {
                     $image = Image::make($realPath);
-                    $savePath = $file->getPath() . DIRECTORY_SEPARATOR . $filename;
                     foreach ($this->interventionCalls as $call) {
-
                         call_user_func_array([$image, $call['method']], $call['arguments']);
-
                     }
                     $file = $image->encode(null, null)->getEncoded();
                 } catch (\Exception $exception) {

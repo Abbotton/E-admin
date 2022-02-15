@@ -41,6 +41,7 @@ class Schedule
     protected $key = '';
     public static $crontab = [];
     protected $name = '';
+
     public function __construct()
     {
         $this->datetime = new \DateTime;
@@ -51,7 +52,7 @@ class Schedule
     {
         $this->closure = $closure;
     }
-    
+
     /**
      * 任务调度
      * @param $name 定时任务名称
@@ -67,16 +68,16 @@ class Schedule
         $key = md5($backtrace['file'] . $name);
         $new->key = $key;
         self::$crontab[] = [
-            'key'=>$new->key,
-            'schedule'=>$new
+            'key' => $new->key,
+            'schedule' => $new
         ];
         $cacheKey = 'crontab_' . $new->key . '_log';
         $log = Cache::get($cacheKey) ?: [];
         $new->name = $name;
         $this->taskList[$new->key] = ['id' => $new->key, 'name' => $name, 'schedule' => $new, 'file' => $backtrace['file'], 'log' => $log];
-        Event::listen(self::class, function ($crontab) use ($new, $cacheKey,$key) {
-          
-            if($crontab === $key || is_null($crontab)){
+        Event::listen(self::class, function ($crontab) use ($new, $cacheKey, $key) {
+
+            if ($crontab === $key || is_null($crontab)) {
                 $new->run();
             }
         });
@@ -87,9 +88,11 @@ class Schedule
      * 是否每分钟任务
      * @return bool
      */
-    public function isMinuteTask(){
+    public function isMinuteTask()
+    {
         return $this->minuteRule > 0;
     }
+
     public function list()
     {
         return $this->taskList;
@@ -119,12 +122,12 @@ class Schedule
         } elseif ($this->yearly) {
             $this->yearRule();
         }
-        
+
         if (in_array($this->nowTime, $this->rule) || $force || in_array(date('Y-m-d H:i:s'), $this->rule)) {
             $message = '';
             $cacheKey = 'crontab_' . $this->key . '_log';
             $log = Cache::get($cacheKey) ?: [];
-            $log = array_slice($log,0,10);
+            $log = array_slice($log, 0, 10);
             $time = microtime(true);
             $datetime = date('Y-m-d H:i:s');
             try {
@@ -133,26 +136,30 @@ class Schedule
                 } elseif (class_exists($this->closure)) {
                     app()->make($this->closure);
                 }
-            }catch (\Throwable $exception){
-                $message.='<div><b style="color: red">任务失败错误信息</b>：' . $exception->getMessage().'</div>';
-                $message.='<div><b style="color: red">任务失败追踪错误</b>：<pre>' . $exception->getTraceAsString().'</pre></div>';
+            } catch (\Throwable $exception) {
+                $message .= '<div><b style="color: red">任务失败错误信息</b>：' . $exception->getMessage() . '</div>';
+                $message .= '<div><b style="color: red">任务失败追踪错误</b>：<pre>' . $exception->getTraceAsString() . '</pre></div>';
             }
             $time = microtime(true) - $time;
-            if(!empty($message)){
-                if(app()->runningInConsole()) {
-                    dump("[{$this->name}] 执行失败");
+            if (!empty($message)) {
+                if (app()->runningInConsole()) {
+                    dump($datetime . " [{$this->name}] 执行失败");
                 }
-                array_unshift($log, ['message' => $message .'耗时：'.$time, 'time' => $datetime]);
-            }else{
-                if(app()->runningInConsole()){
-                    dump("[{$this->name}] 执行完成,耗时:".$time);
+                array_unshift($log, ['message' => $message . '耗时：' . $time, 'time' => $datetime]);
+            } else {
+                if (app()->runningInConsole()) {
+                    dump($datetime . " [{$this->name}] 执行完成,耗时:" . $time);
                 }
-                array_unshift($log, ['message' => $message .PHP_EOL. '执行完成,耗时：'.$time, 'time' => $datetime]);
+                array_unshift($log, ['message' => $message . PHP_EOL . '执行完成,耗时：' . $time, 'time' => $datetime]);
             }
             Cache::set($cacheKey, $log, 86400);
         }
     }
-
+    public function getLog($id){
+        $log = $this->taskList[$id];
+        $cacheKey = 'crontab_' . $id . '_log';
+        return  Cache::get($cacheKey) ?: [];
+    }
     /**
      * 定时每几分钟执行
      * @Author: rocky
@@ -191,16 +198,19 @@ class Schedule
         }
         $this->timeDesc = "每小时{$minute}分钟";
     }
+
     /**
      * 定时每秒执行
      * @Author: rocky
      * 2019/8/19 10:01
      * @param int $minte 每几秒
      */
-    public function everySecond($second=1){
+    public function everySecond($second = 1)
+    {
         $this->timeDesc = "每{$second}秒";
         $this->secondRule = $second;
     }
+
     /**
      * 定时每几天执行
      * @Author: rocky
@@ -284,6 +294,7 @@ class Schedule
         $this->yearly = true;
         $this->timeDesc = "每年";
     }
+
     /**
      * 秒钟规则生成
      * @Author: rocky
@@ -295,13 +306,14 @@ class Schedule
         $minute = date('i');
         $nowHour = date('H');
         while ($second <= 59) {
-            $this->datetime->setTime($nowHour, $minute,$second);
+            $this->datetime->setTime($nowHour, $minute, $second);
             $second += $this->secondRule;
             if ($second <= 59) {
                 array_push($this->rule, $this->datetime->format('Y-m-d H:i:s'));
             }
         }
     }
+
     /**
      * 分钟规则生成
      * @Author: rocky

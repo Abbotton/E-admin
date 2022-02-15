@@ -21,6 +21,7 @@ use Eadmin\middleware\Response;
 use Eadmin\model\SystemFile;
 use Eadmin\service\AuthService;
 use Eadmin\service\BackupData;
+use Eadmin\service\CrontabService;
 use Eadmin\service\MenuService;
 use Eadmin\service\NodeService;
 use Eadmin\service\QueueService;
@@ -52,6 +53,8 @@ class ServiceProvider extends Service
         //json压缩
         $this->zlib();
         $this->registerService();
+        //定时任务
+        app('admin.crontab')->register();
         //注册上传路由
         FileService::instance()->registerRoute();
         //注册插件
@@ -163,36 +166,10 @@ class ServiceProvider extends Service
             'admin.auth' => AuthService::class,
             'admin.node' => NodeService::class,
             'admin.file' => FileService::class,
+            'admin.crontab' => CrontabService::class,
         ]);
     }
-    protected function crontab(){
-        try{
-            $where = ['databackup_on','database_number','database_day'];
-            $config = Db::name('SystemConfig')
-                ->whereIn('name',$where)
-                ->cache(300)
-                ->column('value','name');
-            Schedule::call('数据库备份和定时清理excel目录',function () use($config) {
-                //数据库备份
-                if($config['databackup_on'] == 1){
-                    BackupData::instance()->backup();
-                    $list = BackupData::instance()->getBackUpList();
-                    if(count($list) > $config['database_number']){
-                        $backData = array_pop($list);
-                        BackupData::instance()->delete($backData['id']);
-                    }
-                }
-                //定时清理excel目录
-                $fileSystem = new \Symfony\Component\Filesystem\Filesystem();
-                $fileSystem->remove(app()->getRootPath().'public/upload/excel');
-            })->everyDay($config['database_day']);
-            Schedule::call('清理上传已删除文件',function () {
-                Admin::file()->clear();
-            })->everyMinute();
-        }catch (\Exception $exception){
 
-        }
-    }
     public function boot()
     {
         $this->commands([
@@ -210,8 +187,6 @@ class ServiceProvider extends Service
             'Eadmin\command\App',
         ]);
 
-        //定时任务
-        $this->crontab();
         //检测静态文件版本发布
         $this->publishVersion();
     }

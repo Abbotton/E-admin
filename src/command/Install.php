@@ -46,7 +46,7 @@ class Install extends Command
         Console::call('seed:eadmin',['path'=> $path.'/database/seeds']);
         Console::call('eadmin:publish',$params);
         $file = __DIR__.'/../../.env';
-        copy($file,app()->getRootPath().'public/exadmin/.env');
+        copy($file,app()->getRootPath().'public/eadmin/.env');
         $configPath = $path.'/assets/config';
         $finder = new Finder();
         foreach ($finder->in($configPath) as $file) {

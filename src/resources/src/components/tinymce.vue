@@ -130,11 +130,11 @@ export default defineComponent({
   setup(props, ctx) {
     const state = reactive({
       init: {
-        base_url: '/exadmin/tinymce',
-        language_url: `/exadmin/tinymce/langs/zh_CN.js`,
+        base_url: '/eadmin/tinymce',
+        language_url: `/eadmin/tinymce/langs/zh_CN.js`,
         language: 'zh_CN',
-        skin_url: `/exadmin/tinymce/skins/ui/oxide`,
-        content_css: `/exadmin/tinymce/skins/content/default/content.css`,
+        skin_url: `/eadmin/tinymce/skins/ui/oxide`,
+        content_css: `/eadmin/tinymce/skins/content/default/content.css`,
         height: props.height,
         width: props.width,
         fontsize_formats:'10px 11px 12px 14px 16px 18px 20px 24px 36px',
@@ -169,7 +169,7 @@ export default defineComponent({
         convert_urls: false,
         content_style: 'img {max-width:100% !important } .eadmin-tag{background-color:#ecf5ff;border-color:#d9ecff;color:#409eff;display:inline-block;height:32px;padding:0 10px;line-height:30px;font-size:12px;color:'+variables.theme+';border-width:1px;border-style:solid;border-radius:4px;box-sizing:border-box;white-space:nowrap} .eadmin-tag +.eadmin-tag{margin-left:8px}',
         external_plugins: {
-          'powerpaste': '/exadmin/tinymce/plugins/powerpaste/plugin.min.js'
+          'powerpaste': '/eadmin/tinymce/plugins/powerpaste/plugin.min.js'
         },
         images_upload_handler: (blobInfo, succFun, failFun) => {
           upload(blobInfo.blob()).then(res => {

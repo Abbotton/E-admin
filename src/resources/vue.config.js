@@ -1,6 +1,6 @@
 module.exports = {
 	lintOnSave: false,
-	publicPath: '/exadmin',
+	publicPath: '/eadmin',
 	outputDir: '../assets/public',
 	assetsDir: 'static',
 	indexPath:'../admin/view/index.vue',

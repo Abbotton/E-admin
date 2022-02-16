@@ -260,7 +260,7 @@ class Model implements GridInterface
                 ->where($pk, '<>', $data['id'])
                 ->buildSql();
             $this->model->where($pk, $data['id'])->update([$this->sortField => $data['sort']]);
-            $res = Db::execute("update {$this->model->getTable()} inner join {$sortSql} a on a.{$pk}={$this->model->getTable()}.{$pk} set {$this->sortField}=a.rownum");
+            $res = Db::execute("update {$this->model->getTable()} inner join {$sortSql} a on a.{$pk}={$this->model->getTable()}.{$pk} set `{$this->sortField}`=a.rownum");
             admin_success(admin_trans('admin.operation_complete'), admin_trans('admin.sort_success'));
         } else {
             if(property_exists($this->model, 'withTrashed')){

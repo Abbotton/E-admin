@@ -370,6 +370,7 @@
                         } else {
                             if(item && typeof(item) == 'string' && item.indexOf('#') !== 0){
                                 if(checkHtml(item) || checkTemplate(item)){
+                                  console.log(item)
                                     return h({
                                         setup() {
                                             return {
@@ -403,7 +404,7 @@
              * @param htmlStr
              */
             function checkHtml(htmlStr) {
-                var  reg = /<[^>^\n]+>/g;
+                var  reg = /^<\/?[^\s>\/]+/;
                 return reg.test(htmlStr);
             }
             /**

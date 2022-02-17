@@ -69,6 +69,19 @@ class ServiceProvider extends Service
         $this->app->middleware->route(\Eadmin\middleware\MultiApp::class);
         $this->app->middleware->route(LoadLangPack::class);
 
+        $this->app->middleware->add(function ($request, $next){
+            /**
+             * think-swoole v4.0.7版本之前模式下的bug，后期官方修复可移除，修改route中app属性
+             */
+            $class = new \ReflectionClass(app()->route);
+            $attribute = $class->getProperty('app');
+            $attribute->setAccessible(true);
+            // 给私有属性赋值
+
+            $attribute->setValue(app()->route,app());
+            return $next($request);
+        });
+
     }
     protected function finderIn($path,$name = [],$type='directories'){
 

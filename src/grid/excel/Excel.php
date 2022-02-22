@@ -139,8 +139,8 @@ class Excel extends AbstractExporter
         $this->init();
         $this->writeRowData();
         $queue = new QueueService(request()->get('system_queue_id'));
-        $queue->percentage($count, $this->totalRowIndex-1, '正在导出');
-        if ($this->totalRowIndex == $count) {
+        $queue->percentage($count, $this->totalRowIndex-1, "正在导出({$this->totalRowIndex} / {$count})");
+        if ($this->totalRowIndex >= $count) {
             if ($this->compress) {
                 $count = ceil($count / $this->excelMaxRow);
                 if($count != count($this->compressFiles)){
@@ -157,7 +157,7 @@ class Excel extends AbstractExporter
                 }
                 $zip->close();
                 foreach ($this->compressFiles as $file){
-                    unlink($file);
+                    @unlink($file);
                 }
                 $filename = Filesystem::disk('local')->getConfig()->get('url') . '/excel/' . $this->fileName.'.zip';
             }else{

@@ -142,7 +142,7 @@ class Excel extends AbstractExporter
         $queue->percentage($count, $this->totalRowIndex-1, '正在导出');
         if ($this->totalRowIndex == $count) {
             if ($this->compress) {
-                $count = round($count / $this->excelMaxRow);
+                $count = ceil($count / $this->excelMaxRow);
                 if($count != count($this->compressFiles)){
                     $this->save($this->fileName . '-' . count($this->compressFiles));
                 }

@@ -18,6 +18,7 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use think\facade\Filesystem;
+use think\helper\Arr;
 
 /**
  * Class Excel
@@ -137,6 +138,7 @@ class Excel extends AbstractExporter
     public function queueExport($count)
     {
         $this->init();
+        Arr::set()
         $this->writeRowData();
         $queue = new QueueService(request()->get('system_queue_id'));
         $queue->percentage($count, $this->totalRowIndex-1, "正在导出({$this->totalRowIndex} / {$count})");

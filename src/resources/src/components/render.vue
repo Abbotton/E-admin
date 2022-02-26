@@ -404,7 +404,7 @@
              * @param htmlStr
              */
             function checkHtml(htmlStr) {
-                var  reg = /^<\/?[^\s>\/]+/;
+                var  reg = /<\/?[^\s>\/]+/;
                 return reg.test(htmlStr);
             }
             /**

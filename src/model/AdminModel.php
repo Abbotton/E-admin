@@ -10,7 +10,7 @@ namespace Eadmin\model;
 
 use Eadmin\Admin;
 
-class AdminModel extends \app\model\BaseModel
+class AdminModel extends BaseModel
 {
     public function __construct(array $data = [])
     {

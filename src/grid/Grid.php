@@ -586,7 +586,7 @@ class Grid extends Component
         foreach ($datas as $key => $data) {
             //主键
             $row = ['eadmin_id' => $data[$this->drive->getPk()] ?? $key];
-            $row = ['eadmin_'.$this->attr('selectField') => $data[$this->attr('selectField')]];
+            $row = ['eadmin_'.$this->attr('selectField') => $data[$this->attr('selectField')]] ?? $key;
             if (is_null($this->customClosure)) {
                 //树形父级pid
                 if ($this->isTree) {

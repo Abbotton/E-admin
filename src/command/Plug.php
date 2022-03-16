@@ -18,12 +18,14 @@ class Plug extends Command
     protected $namespace;
     protected $description;
     protected $className;
+    protected $sort;
     protected function configure()
     {
         // 指令配置
         $this->setName('eadmin:plug')->setDescription('生成插件');
         $this->addArgument('name', 1, "插件包名");
         $this->addArgument('title', 1, "插件标题");
+        $this->addArgument('sort', 1, "插件排序");
         $this->addOption('description', 1, Option::VALUE_REQUIRED,"插件描述");
         $this->addOption('namespace', 2, Option::VALUE_REQUIRED,"命名空间");
     }
@@ -31,6 +33,7 @@ class Plug extends Command
     {
         $this->package = $input->getArgument('name');
         $this->title = $input->getArgument('title');
+        $this->sort = $input->getArgument('sort');
         $plugName = $this->package;
         $this->namespace = 'plugin\\'.$input->getOption('namespace');
         $this->description = $input->getOption('description');
@@ -90,12 +93,14 @@ class Plug extends Command
             '{description}',
             '{namespace}',
             '{className}',
+            '{sort}',
         ],[
             $this->package,
             $this->title,
             $this->description,
             str_replace('\\', '\\\\', $this->namespace),
-            $this->className
+            $this->className,
+            $this->sort
         ],$stub);
         $composerFile = $dir.DIRECTORY_SEPARATOR.'info.json';
         if(is_file($composerFile)){

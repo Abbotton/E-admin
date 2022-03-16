@@ -4,6 +4,7 @@
   "description": "{description}",
   "status": true,
   "version": "1.0.0",
+  "sort": "{sort}",
   "author": "",
   "namespace": "{namespace}",
   "services": "{namespace}\\{className}Service",

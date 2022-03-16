@@ -135,7 +135,14 @@ class PlugService
             $this->verify();
         }
         $loader = Composer::loader();
-        foreach ($this->plugPaths as $name => $plugPaths) {
+        $tempPlugPathsArray = [];
+        foreach ($this->plugPaths as $name => &$path) {
+            $info = $this->info($name);
+            $tempPlugPathsArray[] = ['path' => $path, 'sort' => $info['sort'] ?? 0, 'name' => $name];
+        }
+        array_multisort(array_column($tempPlugPathsArray, 'sort'), SORT_ASC, $tempPlugPathsArray);
+        $plugPathsArray = array_column($tempPlugPathsArray, 'path', 'name');
+        foreach ($plugPathsArray as $name => $plugPaths) {
             if (!$this->checkAuthorized($name)) continue;
             $arr = $this->info($name);
             $arr['plug_path'] = $plugPaths;
@@ -370,9 +377,14 @@ class PlugService
                 }
             }
             $info['authorized'] = $this->checkAuthorized($info['name']);
+            if(!isset($info['sort'])) {
+                $info['sort'] = 0;
+            }
             $plugs[$info['name']] = $info;
         }
         $this->total = count($plugs);
+        array_multisort(array_column($plugs, 'sort'), SORT_ASC, $plugs);
+
         return $plugs;
     }
 

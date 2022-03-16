@@ -286,6 +286,7 @@ class Plug extends Controller
         $form = new Form(new Config());
         $form->text('name', '扩展标识')->alphaDashRule()->required();
         $form->text('title', '名称')->required();
+        $form->number('sort', '排序')->default(0);
         $form->text('description', '描述');
         $form->saving(function ($post) {
             if(!Admin::plug()->isLogin()){
@@ -297,6 +298,7 @@ class Plug extends Controller
             $name = $post['name'];
             $cmd['name'] = $name;
             $cmd['title'] = $post['title'];
+            $cmd['sort'] = $post['sort'];
             $description = $post['description'];
             if (!empty($description)) {
                 array_push($cmd, "--description={$description}");

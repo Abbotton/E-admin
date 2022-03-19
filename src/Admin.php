@@ -474,6 +474,7 @@ class Admin
         app()->route->post('plug/enable', Plug::class . '@enable');
         app()->route->post('plug/install', Plug::class . '@install');
         app()->route->post('plug/uninstall', Plug::class . '@uninstall');
+        app()->route->post('plug/reInstall', Plug::class . '@reInstall');
         app()->route->post('plug/refreshAuthorization', Plug::class . '@refreshAuthorization');
         app()->route->get('plug', Plug::class . '@index');
 

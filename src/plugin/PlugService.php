@@ -663,4 +663,33 @@ PHP;
         }
         return true;
     }
+
+    /**
+     * 重装插件.
+     * 
+     * @param $name 插件名称
+     * @return bool
+     * @throws \think\db\exception\DbException
+     */
+    public function reInstall($name)
+    {
+        $path = $this->plugPathBase.'/'.$name;
+        // 清空数据
+        $this->dataMigrate('rollback', $path);
+        Db::name('system_menu')->where('mark', $name)->delete();
+        Db::name('system_config')->where('mark', $name)->delete();
+        // 重新安装
+        $this->dataMigrate('run', $path);
+        $seed = $path.'/database'.DIRECTORY_SEPARATOR.'seeds';
+        if (is_dir($seed)) {
+            Console::call('seed:eadmin', ['path' => $seed]);
+        }
+        //添加菜单
+        $serviceProvider = $this->getServiceProviders($name);
+        $serviceProvider->addMenus();
+        //生成ide提示
+        $this->buildIde();
+
+        return true;
+    }
 }

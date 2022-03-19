@@ -151,11 +151,18 @@ class Plug extends Controller
                         Button::create('启用')->sizeSmall()->typeSuccess()->save(['id' => $rows['name'], 'status' => 1], 'plug/enable', '确认启用？')
                     );
                 }
+
+                $actions->append(
+                    Button::create('重装')
+                        ->sizeSmall()
+                        ->typeWarning()
+                        ->save(['name' => $rows['name']], 'plug/reInstall', '确认重新安装【'.$rows['title'].'】吗？此操作将清空插件所有数据！')
+                );
                 $actions->append(
                     Button::create('卸载')
                         ->sizeSmall()
                         ->typeDanger()
-                        ->save(['name' => $rows['name']], 'plug/uninstall', '确认卸载？')
+                        ->save(['name' => $rows['name']], 'plug/uninstall', '确认卸载【'.$rows['title'].'】吗？此操作将清空数据并且删除插件对应的所有文件！')
                 );
             } else {
                 if($rows['is_buy']){
@@ -274,7 +281,17 @@ class Plug extends Controller
         admin_success_message('卸载完成')->refreshMenu()->refresh();
     }
 
-
+     /**
+     * 重新安装
+     * @auth false
+     * @login true
+     */
+    public function reInstall()
+    {
+        $name = $this->request->put('name');
+        Admin::plug()->reInstall($name);
+        admin_success_message('已重新安装')->refreshMenu()->refresh();
+    }
 
     /**
      * 创建扩展

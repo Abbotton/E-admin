@@ -91,7 +91,7 @@ class App extends Command
                 ucfirst($name),
                 ucfirst($name) . 'User',
                 "namespace app\\$name\\model;",
-                '\model;' . PHP_EOL . 'use app\model\BaseModel;',
+                '\model;' . PHP_EOL . 'use Eadmin\model\BaseModel;',
             ], $content);
             file_put_contents($file->getRealPath(), $content);
 

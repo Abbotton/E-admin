@@ -84,11 +84,8 @@ class TokenService
      */
     public function logout($token = '')
     {
-        if (empty($token)) {
-            return Cache::set(md5($this->token), time(), $this->expire);
-        } else {
-            return Cache::set(md5($token), time(), $this->expire);
-        }
+        $token = empty($token) ? $this->token : $token;
+        return Cache::set(md5($token), time(), $this->expire);
     }
 
     /**

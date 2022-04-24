@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @Author: rocky
  * @Copyright: 广州拓冠科技 <http://my8m.com>
@@ -9,11 +10,8 @@
 
 namespace Eadmin\traits;
 
-
-use app\common\service\ApiCode;
 use plugin\apidoc\resource\Resource;
 use think\Collection;
-use think\exception\HttpResponseException;
 use think\facade\Db;
 use think\Model;
 
@@ -34,8 +32,7 @@ trait  ApiJson
      */
     public function successCode($data = [], $code = 200, $msg = '')
     {
-        $response = $this->responseJsonData($data, $code, $msg);
-        throw new HttpResponseException($response);
+        return $this->responseJsonData($data, $code, $msg)->send();
     }
 
     /**
@@ -50,15 +47,14 @@ trait  ApiJson
      */
     public function errorCode($code = 999, $msg = '', $data = [], $http_code = 200)
     {
-        $response = $this->responseJsonData($data, $code, $msg, $http_code);
-        throw new HttpResponseException($response);
+        return $this->responseJsonData($data, $code, $msg, $http_code)->send();
     }
 
     public function addData($key, $data, $desc)
     {
         $this->data[$key] = $data;
         $this->example[$key] = $desc;
-        $this->createExample($data,$key);
+        $this->createExample($data, $key);
         return $this;
     }
 
@@ -69,24 +65,24 @@ trait  ApiJson
 
     protected function createExample($data, $parentKey = null)
     {
-        if($data instanceof Resource){
+        if ($data instanceof Resource) {
             $example = $data->getExample();
-            foreach ($example as $field=>$desc){
-                if(!is_null($parentKey)){
-                    $this->example[$parentKey.'.'.$field] = $desc;
-                }else{
+            foreach ($example as $field => $desc) {
+                if (!is_null($parentKey)) {
+                    $this->example[$parentKey . '.' . $field] = $desc;
+                } else {
                     $this->example[$field] = $desc;
                 }
             }
-        }elseif ($data instanceof Collection && $data->count() > 0) {
+        } elseif ($data instanceof Collection && $data->count() > 0) {
             $data = $data[0];
         }
         if ($data instanceof Model) {
             $fields = $data->getFields();
             foreach ($fields as $field => $row) {
                 $key = $field;
-                if(!empty($parentKey)){
-                    $key = $parentKey.'.'.$field;
+                if (!empty($parentKey)) {
+                    $key = $parentKey . '.' . $field;
                 }
 
                 if ($row['primary'] && empty($row['comment'])) {
@@ -134,6 +130,4 @@ trait  ApiJson
     {
         return $this->data;
     }
-
-
 }

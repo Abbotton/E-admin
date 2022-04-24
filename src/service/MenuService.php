@@ -76,7 +76,7 @@ class MenuService
      */
     public function tree($admin_visible = false)
     {
-        if (Admin::id() == config('admin.admin_auth_id')) {
+        if (Admin::id() == config(Admin::getAppName() . '.admin_auth_id')) {
             $menus = $this->all($admin_visible);
         } else {
             $menus = Admin::user()->menus();

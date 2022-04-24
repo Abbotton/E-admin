@@ -25,7 +25,7 @@ class MultiApp
         if (!empty($allow)) {
             $header = $allow . ', multi-app, version';
         }
-        $allow_headers = implode(', ', config('admin.cross.allow_headers', []));
+        $allow_headers = implode(', ', config($moudel.'.cross.allow_headers', []));
         if (!empty($allow_headers)) {
             $header .= ', ' . $allow_headers;
         }

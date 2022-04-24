@@ -126,7 +126,7 @@ class Admin
 
     public static function menus()
     {
-        if (self::id() == config('admin.admin_auth_id')) {
+        if (self::id() == config(self::getAppName() . '.admin_auth_id')) {
             self::user()->menus();
         } else {
             self::user()->menus();

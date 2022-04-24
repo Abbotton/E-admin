@@ -122,10 +122,12 @@ class NodeService
     protected function parse($files, $is_auth = false,$scanField = false)
     {
         $nodeIds = [];
-        if (config('admin.admin_auth_id') != Admin::id() && $is_auth) {
-            $userAuthModel = config(Admin::getAppName() . '.database.user_auth_model');
-            $auth_ids = $userAuthModel::where('user_id', Admin::id())->column('auth_id');
-            $authNodeModel = config(Admin::getAppName() . '.database.auth_node_model');
+        $appName = Admin::getAppName();
+        $adminId = Admin::id();
+        if (config($appName . '.admin_auth_id') != $adminId && $is_auth) {
+            $userAuthModel = config($appName . '.database.user_auth_model');
+            $auth_ids = $userAuthModel::where('user_id', $adminId)->column('auth_id');
+            $authNodeModel = config($appName . '.database.auth_node_model');
             $nodeIds = $authNodeModel::whereIn('auth_id', $auth_ids)->column('node_id');
         }
         $data = [];
@@ -180,7 +182,7 @@ class NodeService
                                 $nodeData['label'] = $label . '添加';
                                 $nodeData['method'] = 'post';
                                 $nodeData['id'] = md5($namespace . $action . $nodeData['method']);
-                                if (in_array($nodeData['id'], $nodeIds) || config('admin.admin_auth_id') == Admin::id() || !$is_auth) {
+                                if (in_array($nodeData['id'], $nodeIds) || config($appName . '.admin_auth_id') == $adminId || !$is_auth) {
                                     $data[] = $nodeData;
                                     $methodNode[] = $nodeData;
                                 }
@@ -188,12 +190,12 @@ class NodeService
                                 $nodeData['label'] = $label . '修改';
                                 $nodeData['method'] = 'put';
                                 $nodeData['id'] = md5($namespace . $action . $nodeData['method']);
-                                if (in_array($nodeData['id'], $nodeIds) || config('admin.admin_auth_id') == Admin::id() || !$is_auth) {
+                                if (in_array($nodeData['id'], $nodeIds) || config($appName . '.admin_auth_id') == $adminId || !$is_auth) {
                                     $data[] = $nodeData;
                                     $methodNode[] = $nodeData;
                                 }
                             } else {
-                                if (in_array($id, $nodeIds) || config('admin.admin_auth_id') == Admin::id() || !$is_auth) {
+                                if (in_array($id, $nodeIds) || config($appName . '.admin_auth_id') == $adminId || !$is_auth) {
                                     $data[] = $nodeData;
                                     $methodNode[] = $nodeData;
                                 }
@@ -204,7 +206,7 @@ class NodeService
                                     $nodeData['label'] = '删除';
                                     $nodeData['method'] = 'delete';
                                     $nodeData['id'] = md5($namespace . $action . $nodeData['method']);
-                                    if (in_array($nodeData['id'], $nodeIds) || config('admin.admin_auth_id') == Admin::id() || !$is_auth) {
+                                    if (in_array($nodeData['id'], $nodeIds) || config($appName . '.admin_auth_id') == $adminId || !$is_auth) {
                                         $data[] = $nodeData;
                                         $methodNode[] = $nodeData;
                                     }
@@ -272,23 +274,24 @@ class NodeService
                 $modules[] = $file;
             }
         }
+        $appName = Admin::getAppName();
         foreach (glob(dirname(__DIR__) . '/controller/' . '*.php') as $file) {
             if (is_file($file)) {
                 $controller = str_replace('.php', '', basename($file));
                 $namespace = "Eadmin\\controller\\$controller";
                 $controllerFiles[] = [
                     'namespace' => $namespace,
-                    'module' => Admin::getAppName(),
+                    'module' => $appName,
                     'file' => $file,
                 ];
             }
         }
         $finder = new Finder();
+        $authModuleName = config($appName . '.authModule');
         //扫描存在配置权限模块控制器下所有文件
         foreach ($modules as $module) {
             $moduleName = basename($module);
             //权限模块
-            $authModuleName = config(Admin::getAppName() . '.authModule');
             if (isset($authModuleName[$moduleName])) {
                 $authModuleTitle = $authModuleName[$moduleName];
                 $this->treeArr[$moduleName] = [

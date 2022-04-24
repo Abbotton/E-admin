@@ -4,9 +4,8 @@
 namespace Eadmin\service;
 
 
-use Eadmin\model\SystemQueue;
+use Eadmin\Admin;
 use Eadmin\Queue;
-use think\facade\Db;
 
 class QueueService extends Queue
 {
@@ -17,7 +16,9 @@ class QueueService extends Queue
 
     public function retry()
     {
-        $queue = SystemQueue::find($this->queueId);
+	    $class = config(Admin::getAppName() . '.database.queue_model');
+	    $instance = new $class();
+        $queue = $instance::find($this->queueId);
         $queue->save(['status' => 1]);
         $data = $queue['queue_data'];
         $this->progress('任务重试');
@@ -37,13 +38,15 @@ class QueueService extends Queue
     public function queue($title, $job, array $data, $delay = 0, $queue)
     {
         $status = 1;
+	    $class = config(Admin::getAppName() . '.database.queue_model');
+	    $instance = new $class();
         if ($queue) {
-            $status = Db::name('system_queue')
+            $status = $instance
                 ->where('queue', $job)
                 ->where('is_queue', 1)
                 ->where('status', '<', 3)->find() ? 0 : 1;
         }
-        $id = Db::name('system_queue')->insertGetId([
+        $id = $instance->insertGetId([
             'name' => $title,
             'queue' => $job,
             'status' => $status,

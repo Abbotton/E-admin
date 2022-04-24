@@ -50,8 +50,10 @@ class Admin
      */
     public static function sysconf($name, $value = null)
     {
+		$class = config(self::getAppName() . '.database.config_model');
+		$instance = new $class();
         if (is_null($value)) {
-            $value = Db::name('SystemConfig')->where('name', $name)->value('value');
+            $value = $instance->where('name', $name)->value('value');
             if (is_null($value)) {
                 return '';
             } else {
@@ -66,11 +68,11 @@ class Admin
             if (is_array($value)) {
                 $value = json_encode($value, JSON_UNESCAPED_UNICODE);
             }
-            $sysconfig = Db::name('SystemConfig')->where('name', $name)->find();
+            $sysconfig = $instance->where('name', $name)->find();
             if ($sysconfig) {
-                return Db::name('SystemConfig')->where('name', $name)->update(['value' => $value]);
+                return $instance->where('name', $name)->update(['value' => $value]);
             } else {
-                return Db::name('SystemConfig')->insert([
+                return $instance->insert([
                     'name' => $name,
                     'value' => $value,
                 ]);
@@ -474,7 +476,6 @@ class Admin
         app()->route->post('plug/enable', Plug::class . '@enable');
         app()->route->post('plug/install', Plug::class . '@install');
         app()->route->post('plug/uninstall', Plug::class . '@uninstall');
-        app()->route->post('plug/reInstall', Plug::class . '@reInstall');
         app()->route->post('plug/refreshAuthorization', Plug::class . '@refreshAuthorization');
         app()->route->get('plug', Plug::class . '@index');
 

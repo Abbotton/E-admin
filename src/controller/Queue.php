@@ -2,16 +2,13 @@
 
 namespace Eadmin\controller;
 
+use Eadmin\Admin;
 use Eadmin\component\basic\Button;
 use Eadmin\component\basic\Html;
-use Eadmin\component\basic\Tag;
 use Eadmin\Controller;
-use Eadmin\form\Form;
 use Eadmin\grid\Actions;
-use Eadmin\detail\Detail;
 use Eadmin\grid\Filter;
 use Eadmin\grid\Grid;
-use Eadmin\model\SystemQueue;
 use Eadmin\service\QueueService;
 
 /**
@@ -32,7 +29,9 @@ class Queue extends Controller
      */
     public function index(): Grid
     {
-        return Grid::create(new SystemQueue(), function (Grid $grid) {
+	    $class = config(Admin::getAppName() . '.database.queue_model');
+	    $instance = new $class();
+        return Grid::create($instance, function (Grid $grid) {
             $grid->title($this->title);
             $grid->column('name', '任务信息')->display(function ($val, $data) {
                 return Html::create([

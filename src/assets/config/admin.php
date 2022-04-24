@@ -10,6 +10,7 @@ use Eadmin\model\AdminModel;
 use Eadmin\model\SystemAuthMenu;
 use Eadmin\model\SystemAuth;
 use Eadmin\model\SystemAuthNode;
+use Eadmin\model\SystemConfig;
 use Eadmin\model\SystemMenu;
 use Eadmin\model\SystemNotice;
 use Eadmin\model\SystemAuthData;
@@ -92,6 +93,12 @@ return [
         'file_model' => SystemFile::class,
         'file_cate_table' => 'system_file_cate',
         'file_cate_model' => SystemFileCate::class,
+        // 系统配置
+        'config_table' => 'system_config',
+        'config_model' => SystemConfig::class,
+        // 队列
+        'queue_table' => 'system_queue',
+        'queue_model' => SystemQueue::class
     ],
 
     //权限模块

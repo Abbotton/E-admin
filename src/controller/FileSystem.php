@@ -11,7 +11,6 @@ use Eadmin\form\Form;
 use Eadmin\grid\SidebarGrid;
 use Eadmin\model\AdminModel;
 use Eadmin\model\SystemFile;
-use Eadmin\model\SystemFileCate;
 use Eadmin\service\FileService;
 
 use think\db\Query;
@@ -78,8 +77,9 @@ class FileSystem extends Controller
     public function cateForm()
     {
         $model = config(Admin::getAppName().'.database.file_cate_model');
-        $form = new Form(new $model);
-        $options = Admin::menu()->listOptions(SystemFileCate::where('admin_id',Admin::id())->select()->toArray());
+		$modelInstance = new $model;
+        $form = new Form($modelInstance);
+        $options = Admin::menu()->listOptions($modelInstance::where('admin_id',Admin::id())->select()->toArray());
         $form->select('pid', admin_trans('filesystem.labels.cate'))
             ->options([0 => admin_trans('filesystem.topCate')] + array_column($options, 'label', 'id'))
             ->required();

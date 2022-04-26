@@ -45,9 +45,9 @@ trait  ApiJson
      * @param int $http_code http状态码
      * @return \think\response\Json
      */
-    public function errorCode($code = 999, $msg = '', $data = [], $http_code = 200)
+    public function errorCode($code = 999, $msg = '', $data = [], $http_code = 500)
     {
-        return $this->responseJsonData($data, $code, $msg, $http_code)->send();
+        return $this->responseJsonData($data, $code, $msg, $http_code);
     }
 
     public function addData($key, $data, $desc)

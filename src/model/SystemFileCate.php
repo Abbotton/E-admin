@@ -2,7 +2,7 @@
 
 namespace Eadmin\model;
 
-
+use Eadmin\Admin;
 
 class SystemFileCate extends BaseModel
 {
